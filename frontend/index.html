@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockPulse | Weekday Performance Analyzer</title>
+    <meta name="description" content="Professional stock market analyzer. Discover historical weekday performance, win rates, and volatility for global stocks.">
+    <link rel="stylesheet" href="/static/style.css?v=3">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <i data-lucide="trending-up" style="color: var(--primary); width: 32px; height: 32px;"></i>
+                <h1>StockPulse Analyzer</h1>
+            </div>
+            <p>Institutional-grade weekday performance analytics for global & Indian markets</p>
+        </header>
+
+        <section class="controls">
+            <div class="control-group">
+                <label for="csv-upload">Upload Stock CSV Data</label>
+                <div style="position: relative;">
+                    <i data-lucide="upload" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); width: 18px;"></i>
+                    <input type="file" id="csv-upload" accept=".csv" style="width: 100%; border: 1px solid var(--border); border-radius: 12px; background: rgba(0, 0, 0, 0.2); transition: all 0.3s; padding: 0.85rem 1rem 0.85rem 3rem; color: white;">
+                </div>
+            </div>
+            <div class="control-group">
+                <label for="weekday">Analysis Target</label>
+                <div style="position: relative;">
+                    <i data-lucide="calendar" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); width: 18px;"></i>
+                    <select id="weekday" style="padding-left: 3rem; width: 100%;">
+                        <option value="Monday">Monday Sessions</option>
+                        <option value="Tuesday">Tuesday Sessions</option>
+                        <option value="Wednesday">Wednesday Sessions</option>
+                        <option value="Thursday">Thursday Sessions</option>
+                        <option value="Friday">Friday Sessions</option>
+                    </select>
+                </div>
+            </div>
+            <button id="analyze-btn">
+                <i data-lucide="zap" style="width: 18px;"></i>
+                Analyze Data
+            </button>
+        </section>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p style="color: var(--text-muted); font-weight: 500;">Crunching historical data points...</p>
+        </div>
+
+        <section id="results" class="main-content" style="display: none;">
+            <!-- Historical Log -->
+            <div class="card full-width">
+                <h2><i data-lucide="list" style="color: var(--primary);"></i> Historical Session Log</h2>
+                <div class="table-wrapper">
+                    <table id="weekday-data-table">
+                        <thead>
+                            <tr>
+                                <th>Session Date</th>
+                                <th>Weekday</th>
+                                <th>Open</th>
+                                <th>High</th>
+                                <th>Low</th>
+                                <th>Close</th>
+                                <th>Volume</th>
+                                <th>Alpha (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body">
+                            <!-- Table data will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+        </section>
+    </div>
+
+    <!-- Initialize Icons and App -->
+    <script>
+        lucide.createIcons();
+    </script>
+    <script src="/static/script.js?v=3"></script>
+</body>
+</html>
+
