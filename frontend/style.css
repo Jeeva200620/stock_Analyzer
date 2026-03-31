@@ -341,3 +341,34 @@ tr:hover td {
     .control-group { min-width: 100%; }
 }
 
+/* Table Sorting Styles */
+th.sortable {
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+th.sortable:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-main);
+}
+
+.sort-icon {
+    opacity: 0.4;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+th.sortable:hover .sort-icon,
+th.sortable.active-sort .sort-icon {
+    opacity: 1;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    opacity: 0.6;
+    cursor: pointer;
+}
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+

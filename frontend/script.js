@@ -4,11 +4,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const csvUpload = document.getElementById('csv-upload');
     const weekdaySelect = document.getElementById('weekday');
     const analyzeBtn = document.getElementById('analyze-btn');
+    const exportBtn = document.getElementById('export-btn');
+    const startDateInput = document.getElementById('start-date');
+    const endDateInput = document.getElementById('end-date');
     const resultsSection = document.getElementById('results');
     const loadingSection = document.getElementById('loading');
     const tableBody = document.getElementById('table-body');
+    const metricsContainer = document.getElementById('metrics-container');
 
     let allData = []; // Store parsed CSV data
+    let currentFilteredData = []; // Store currently filtered data
+    let sortConfig = { key: 'rawDate', direction: 'desc' }; // Default sort configuration
 
     csvUpload.addEventListener('change', (e) => {
         const file = e.target.files[0];
@@ -29,6 +35,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     analyzeBtn.addEventListener('click', () => {
         performAnalysis();
+    });
+
+    exportBtn.addEventListener('click', () => {
+        exportToCSV();
     });
 
     weekdaySelect.addEventListener('change', () => {
@@ -175,11 +185,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function displayStockData(targetWeekday) {
         // filter by weekday, e.g., 'Monday', 'Tuesday', etc.
-        const filteredData = allData.filter(d => d.weekdayName.includes(targetWeekday));
+        let filteredData = allData.filter(d => d.weekdayName.includes(targetWeekday));
         
+        // Filter by date range
+        const startVal = startDateInput.value;
+        const endVal = endDateInput.value;
+        
+        if (startVal) {
+            const startMs = new Date(startVal).getTime();
+            filteredData = filteredData.filter(d => d.rawDate >= startMs);
+        }
+        if (endVal) {
+            const endMs = new Date(endVal).getTime();
+            // add 24 hours to include the entire end date
+            filteredData = filteredData.filter(d => d.rawDate <= (endMs + 86400000));
+        }
+
+        currentFilteredData = [...filteredData];
+        
+        // Update metrics
+        updateMetrics(currentFilteredData);
+
+        // Render table
+        renderTableData();
+    }
+
+    function renderTableData() {
         tableBody.innerHTML = '';
-        // Sort newest first using precise local timestamps
-        const sortedData = [...filteredData].sort((a, b) => b.rawDate - a.rawDate);
+        
+        // Sort data
+        const sortedData = [...currentFilteredData].sort((a, b) => {
+            const valA = a[sortConfig.key];
+            const valB = b[sortConfig.key];
+            
+            if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
+            if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
+            return 0;
+        });
 
         sortedData.forEach(record => {
             const tr = document.createElement('tr');
@@ -204,6 +246,115 @@ document.addEventListener('DOMContentLoaded', () => {
             tableBody.appendChild(tr);
         });
     }
+
+    function updateMetrics(data) {
+        if (data.length === 0) {
+            metricsContainer.innerHTML = '<p style="color:var(--text-muted);">No data matched the selected criteria.</p>';
+            return;
+        }
+
+        let profitDays = 0;
+        let totalReturn = 0;
+        let bestDay = data[0];
+        let worstDay = data[0];
+
+        data.forEach(d => {
+            if (d.return_percent > 0) profitDays++;
+            totalReturn += d.return_percent;
+            
+            if (d.return_percent > bestDay.return_percent) bestDay = d;
+            if (d.return_percent < worstDay.return_percent) worstDay = d;
+        });
+
+        const winRate = (profitDays / data.length) * 100;
+        const avgAlpha = totalReturn / data.length;
+
+        metricsContainer.innerHTML = `
+            <div class="stat-card">
+                <div class="stat-label">TOTAL SESSIONS</div>
+                <div class="stat-value" style="color: var(--text-main);">${data.length}</div>
+                <div class="stat-detail">In given date range</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">AVERAGE ALPHA</div>
+                <div class="stat-value ${avgAlpha > 0 ? 'positive' : 'negative'}">
+                    ${avgAlpha > 0 ? '+' : ''}${avgAlpha.toFixed(2)}%
+                </div>
+                <div class="stat-detail">Per session</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">WIN RATE</div>
+                <div class="stat-value" style="color: var(--primary);">${winRate.toFixed(1)}%</div>
+                <div class="stat-detail">${profitDays} profitable sessions</div>
+            </div>
+            <div class="stat-card best-day">
+                <div class="stat-label">BEST SESSION</div>
+                <div class="stat-value positive">+${bestDay.return_percent.toFixed(2)}%</div>
+                <div class="stat-detail">${bestDay.formattedDate}</div>
+            </div>
+        `;
+    }
+
+    function exportToCSV() {
+        if (!currentFilteredData || currentFilteredData.length === 0) {
+            alert("No data available to export! Please analyze first.");
+            return;
+        }
+
+        // Sort just like current table view
+        const exportData = [...currentFilteredData].sort((a, b) => {
+            const valA = a[sortConfig.key];
+            const valB = b[sortConfig.key];
+            if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
+            if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+
+        let csvContent = "Session Date,Weekday,Open,High,Low,Close,Volume,Alpha (%)\n";
+        exportData.forEach(row => {
+            let rowCsv = `${row.formattedDate},${row.weekdayName},${row.open.toFixed(2)},${row.high.toFixed(2)},${row.low.toFixed(2)},${row.close.toFixed(2)},${row.volume},${row.return_percent.toFixed(4)}\n`;
+            csvContent += rowCsv;
+        });
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", `StockPulse_Export_${weekdaySelect.value}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+    
+    // Setup Sorting functionality
+    document.querySelectorAll('th.sortable').forEach(th => {
+        th.addEventListener('click', () => {
+            const column = th.getAttribute('data-sort');
+            if (sortConfig.key === column) {
+                sortConfig.direction = sortConfig.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortConfig.key = column;
+                sortConfig.direction = 'desc'; // Default to desc for a new column sort
+            }
+
+            // Update UI icons
+            document.querySelectorAll('th.sortable').forEach(header => {
+                header.classList.remove('active-sort');
+                const icon = header.querySelector('.sort-icon');
+                if(icon) icon.setAttribute('data-lucide', 'arrow-up-down');
+            });
+
+            th.classList.add('active-sort');
+            const targetIcon = th.querySelector('.sort-icon');
+            if(targetIcon) targetIcon.setAttribute('data-lucide', sortConfig.direction === 'asc' ? 'arrow-up' : 'arrow-down');
+            lucide.createIcons();
+            
+            if (currentFilteredData.length > 0) {
+                renderTableData();
+            }
+        });
+    });
 
 
 

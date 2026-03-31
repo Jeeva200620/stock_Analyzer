@@ -41,10 +41,24 @@
                     </select>
                 </div>
             </div>
-            <button id="analyze-btn">
-                <i data-lucide="zap" style="width: 18px;"></i>
-                Analyze Data
-            </button>
+            <div class="control-group" style="min-width: 150px;">
+                <label for="start-date">Start Date</label>
+                <input type="date" id="start-date" style="padding-left: 1rem;">
+            </div>
+            <div class="control-group" style="min-width: 150px;">
+                <label for="end-date">End Date</label>
+                <input type="date" id="end-date" style="padding-left: 1rem;">
+            </div>
+            <div style="display: flex; gap: 0.75rem; align-items: flex-end;">
+                <button id="analyze-btn">
+                    <i data-lucide="zap" style="width: 18px;"></i>
+                    Analyze
+                </button>
+                <button id="export-btn" style="background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main);">
+                    <i data-lucide="download" style="width: 18px;"></i>
+                    Export
+                </button>
+            </div>
         </section>
 
         <div id="loading" class="loading">
@@ -53,6 +67,14 @@
         </div>
 
         <section id="results" class="main-content" style="display: none;">
+            <!-- Summary Metrics -->
+            <div class="card full-width">
+                <h2><i data-lucide="bar-chart-2" style="color: var(--primary);"></i> Summary Metrics</h2>
+                <div class="analytics-grid" id="metrics-container">
+                    <!-- Metrics injected here -->
+                </div>
+            </div>
+
             <!-- Historical Log -->
             <div class="card full-width">
                 <h2><i data-lucide="list" style="color: var(--primary);"></i> Historical Session Log</h2>
@@ -60,14 +82,14 @@
                     <table id="weekday-data-table">
                         <thead>
                             <tr>
-                                <th>Session Date</th>
+                                <th class="sortable" data-sort="rawDate">Session Date <i data-lucide="arrow-up-down" class="sort-icon"></i></th>
                                 <th>Weekday</th>
-                                <th>Open</th>
-                                <th>High</th>
-                                <th>Low</th>
-                                <th>Close</th>
-                                <th>Volume</th>
-                                <th>Alpha (%)</th>
+                                <th class="sortable" data-sort="open">Open <i data-lucide="arrow-up-down" class="sort-icon"></i></th>
+                                <th class="sortable" data-sort="high">High <i data-lucide="arrow-up-down" class="sort-icon"></i></th>
+                                <th class="sortable" data-sort="low">Low <i data-lucide="arrow-up-down" class="sort-icon"></i></th>
+                                <th class="sortable" data-sort="close">Close <i data-lucide="arrow-up-down" class="sort-icon"></i></th>
+                                <th class="sortable" data-sort="volume">Volume <i data-lucide="arrow-up-down" class="sort-icon"></i></th>
+                                <th class="sortable" data-sort="return_percent">Alpha (%) <i data-lucide="arrow-up-down" class="sort-icon"></i></th>
                             </tr>
                         </thead>
                         <tbody id="table-body">
