@@ -138,6 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     high: highVal,
                     low: lowVal,
                     close: closeVal,
+                    highLow: highVal - lowVal,
                     volume: isNaN(volVal) ? 0 : volVal
                 });
             }
@@ -234,13 +235,14 @@ document.addEventListener('DOMContentLoaded', () => {
             tr.innerHTML = `
                 <td style="font-weight: 500;">${dateStrFormatted}</td>
                 <td style="color: var(--primary);">${record.weekdayName}</td>
-                <td>${record.open.toFixed(2)}</td>
-                <td>${record.high.toFixed(2)}</td>
-                <td>${record.low.toFixed(2)}</td>
-                <td>${record.close.toFixed(2)}</td>
-                <td style="color: var(--text-muted); font-size: 0.85rem;">${record.volume.toLocaleString()}</td>
+                <td>${Math.round(record.open)}</td>
+                <td>${Math.round(record.high)}</td>
+                <td>${Math.round(record.low)}</td>
+                <td>${Math.round(record.close)}</td>
+                <td>${Math.round(record.highLow)}</td>
+                <td style="color: var(--text-muted); font-size: 0.85rem;">${Math.round(record.volume).toLocaleString()}</td>
                 <td class="${returnClass}" style="font-weight: 600;">
-                    ${isPos ? '▲' : '▼'} ${Math.abs(record.return_percent).toFixed(2)}%
+                    ${isPos ? '▲' : '▼'} ${Math.round(Math.abs(record.return_percent))}%
                 </td>
             `;
             tableBody.appendChild(tr);
@@ -278,18 +280,18 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="stat-card">
                 <div class="stat-label">AVERAGE ALPHA</div>
                 <div class="stat-value ${avgAlpha > 0 ? 'positive' : 'negative'}">
-                    ${avgAlpha > 0 ? '+' : ''}${avgAlpha.toFixed(2)}%
+                    ${avgAlpha > 0 ? '+' : ''}${Math.round(avgAlpha)}%
                 </div>
                 <div class="stat-detail">Per session</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">WIN RATE</div>
-                <div class="stat-value" style="color: var(--primary);">${winRate.toFixed(1)}%</div>
+                <div class="stat-value" style="color: var(--primary);">${Math.round(winRate)}%</div>
                 <div class="stat-detail">${profitDays} profitable sessions</div>
             </div>
             <div class="stat-card best-day">
                 <div class="stat-label">BEST SESSION</div>
-                <div class="stat-value positive">+${bestDay.return_percent.toFixed(2)}%</div>
+                <div class="stat-value positive">+${Math.round(bestDay.return_percent)}%</div>
                 <div class="stat-detail">${bestDay.formattedDate}</div>
             </div>
         `;
@@ -310,9 +312,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return 0;
         });
 
-        let csvContent = "Session Date,Weekday,Open,High,Low,Close,Volume,Alpha (%)\n";
+        let csvContent = "Session Date,Weekday,Open,High,Low,Close,high-Low,Volume,Alpha (%)\n";
         exportData.forEach(row => {
-            let rowCsv = `${row.formattedDate},${row.weekdayName},${row.open.toFixed(2)},${row.high.toFixed(2)},${row.low.toFixed(2)},${row.close.toFixed(2)},${row.volume},${row.return_percent.toFixed(4)}\n`;
+            let rowCsv = `${row.formattedDate},${row.weekdayName},${Math.round(row.open)},${Math.round(row.high)},${Math.round(row.low)},${Math.round(row.close)},${Math.round(row.highLow)},${Math.round(row.volume)},${Math.round(row.return_percent)}\n`;
             csvContent += rowCsv;
         });
 
