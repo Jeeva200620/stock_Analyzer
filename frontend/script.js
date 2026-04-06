@@ -235,14 +235,14 @@ document.addEventListener('DOMContentLoaded', () => {
             tr.innerHTML = `
                 <td style="font-weight: 500;">${dateStrFormatted}</td>
                 <td style="color: var(--primary);">${record.weekdayName}</td>
-                <td>${Math.round(record.open)}</td>
-                <td>${Math.round(record.high)}</td>
-                <td>${Math.round(record.low)}</td>
-                <td>${Math.round(record.close)}</td>
-                <td>${Math.round(record.highLow)}</td>
+                <td>${Math.round(record.open).toLocaleString()}</td>
+                <td>${Math.round(record.high).toLocaleString()}</td>
+                <td>${Math.round(record.low).toLocaleString()}</td>
+                <td>${Math.round(record.close).toLocaleString()}</td>
+                <td>${Math.round(record.highLow).toLocaleString()}</td>
                 <td style="color: var(--text-muted); font-size: 0.85rem;">${Math.round(record.volume).toLocaleString()}</td>
                 <td class="${returnClass}" style="font-weight: 600;">
-                    ${isPos ? '▲' : '▼'} ${Math.round(Math.abs(record.return_percent))}%
+                    ${isPos ? '▲' : '▼'} ${Math.round(Math.abs(record.return_percent)).toLocaleString()}%
                 </td>
             `;
             tableBody.appendChild(tr);
@@ -274,24 +274,24 @@ document.addEventListener('DOMContentLoaded', () => {
         metricsContainer.innerHTML = `
             <div class="stat-card">
                 <div class="stat-label">TOTAL SESSIONS</div>
-                <div class="stat-value" style="color: var(--text-main);">${data.length}</div>
+                <div class="stat-value" style="color: var(--text-main);">${data.length.toLocaleString()}</div>
                 <div class="stat-detail">In given date range</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">AVERAGE ALPHA</div>
                 <div class="stat-value ${avgAlpha > 0 ? 'positive' : 'negative'}">
-                    ${avgAlpha > 0 ? '+' : ''}${Math.round(avgAlpha)}%
+                    ${avgAlpha > 0 ? '+' : ''}${Math.round(avgAlpha).toLocaleString()}%
                 </div>
                 <div class="stat-detail">Per session</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">WIN RATE</div>
-                <div class="stat-value" style="color: var(--primary);">${Math.round(winRate)}%</div>
-                <div class="stat-detail">${profitDays} profitable sessions</div>
+                <div class="stat-value" style="color: var(--primary);">${Math.round(winRate).toLocaleString()}%</div>
+                <div class="stat-detail">${profitDays.toLocaleString()} profitable sessions</div>
             </div>
             <div class="stat-card best-day">
                 <div class="stat-label">BEST SESSION</div>
-                <div class="stat-value positive">+${Math.round(bestDay.return_percent)}%</div>
+                <div class="stat-value positive">+${Math.round(bestDay.return_percent).toLocaleString()}%</div>
                 <div class="stat-detail">${bestDay.formattedDate}</div>
             </div>
         `;
