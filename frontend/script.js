@@ -312,7 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return 0;
         });
 
-        let csvContent = "Session Date,Weekday,Open,High,Low,Close,high-Low,Volume,Alpha (%)\n";
+        let csvContent = "Session Date,Weekday,Open,High,Low,Close,Range(H-L),Volume,Alpha (%)\n";
         exportData.forEach(row => {
             let rowCsv = `${row.formattedDate},${row.weekdayName},${Math.round(row.open)},${Math.round(row.high)},${Math.round(row.low)},${Math.round(row.close)},${Math.round(row.highLow)},${Math.round(row.volume)},${Math.round(row.return_percent)}\n`;
             csvContent += rowCsv;
