@@ -139,6 +139,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     low: lowVal,
                     close: closeVal,
                     highLow: highVal - lowVal,
+                    openHigh: highVal - openVal,
+                    openLow: openVal - lowVal,
                     volume: isNaN(volVal) ? 0 : volVal
                 });
             }
@@ -240,6 +242,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${Math.round(record.low).toLocaleString()}</td>
                 <td>${Math.round(record.close).toLocaleString()}</td>
                 <td>${Math.round(record.highLow).toLocaleString()}</td>
+                <td>${Math.round(record.openHigh).toLocaleString()}</td>
+                <td>${Math.round(record.openLow).toLocaleString()}</td>
                 <td style="color: var(--text-muted); font-size: 0.85rem;">${Math.round(record.volume).toLocaleString()}</td>
                 <td class="${returnClass}" style="font-weight: 600;">
                     ${isPos ? '▲' : '▼'} ${Math.round(Math.abs(record.return_percent)).toLocaleString()}%
@@ -312,9 +316,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return 0;
         });
 
-        let csvContent = "Session Date,Weekday,Open,High,Low,Close,Range(H-L),Volume,Alpha (%)\n";
+        let csvContent = "Session Date,Weekday,Open,High,Low,Close,Range(H-L),H-O,O-L,Volume,Alpha (%)\n";
         exportData.forEach(row => {
-            let rowCsv = `${row.formattedDate},${row.weekdayName},${Math.round(row.open)},${Math.round(row.high)},${Math.round(row.low)},${Math.round(row.close)},${Math.round(row.highLow)},${Math.round(row.volume)},${Math.round(row.return_percent)}\n`;
+            let rowCsv = `${row.formattedDate},${row.weekdayName},${Math.round(row.open)},${Math.round(row.high)},${Math.round(row.low)},${Math.round(row.close)},${Math.round(row.highLow)},${Math.round(row.openHigh)},${Math.round(row.openLow)},${Math.round(row.volume)},${Math.round(row.return_percent)}\n`;
             csvContent += rowCsv;
         });
 
