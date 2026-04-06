@@ -125,14 +125,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const volVal = volumeIdx >= 0 ? parseFloat(parts[volumeIdx]) : 0;
 
             if (!isNaN(openVal) && !isNaN(closeVal)) {
-                const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
                 const dd = String(dateObj.getDate()).padStart(2, '0');
                 const yy = dateObj.getFullYear();
+                const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                const monthName = months[dateObj.getMonth()];
                 
                 data.push({
                     date: dateStr,
                     rawDate: dateObj.getTime(),
-                    formattedDate: `${yy}-${mm}-${dd}`,
+                    formattedDate: `${dd}-${monthName}-${yy}`,
                     weekdayName: days[dateObj.getDay()],
                     open: openVal,
                     high: highVal,
